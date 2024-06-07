@@ -47,10 +47,14 @@ jobs:
       run: echo "no" | avdmanager --verbose create avd --force --name test --package "system-images;android-30;default;x86_64"
 
     - name: Start emulator
+      env:
+        ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
       run: |
-        emulator -avd test -no-audio -no-window &
+        echo "Starting emulator..."
+        $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-audio -no-window &
         adb wait-for-device
-        adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+        timeout 5m adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+        echo "Emulator started."
 
     - name: Check emulator status
       run: adb shell getprop sys.boot_completed
