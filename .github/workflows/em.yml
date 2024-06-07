@@ -40,11 +40,11 @@ jobs:
 
     - name: Install emulator
       if: steps.cache-emulator.outputs.cache-hit != 'true'
-      run: echo "y" | sdkmanager --install "system-images;android-30;default;armeabi-v7a"
+      run: echo "y" | sdkmanager --install "system-images;android-30;google_apis;armeabi-v7a"
 
     - name: Create emulator
       if: steps.cache-emulator.outputs.cache-hit != 'true'
-      run: echo "no" | avdmanager --verbose create avd --force --name test --package "system-images;android-30;default;armeabi-v7a"
+      run: echo "no" | avdmanager --verbose create avd --force --name test --package "system-images;android-30;google_apis;armeabi-v7a"
 
     - name: Start emulator
       env:
@@ -58,6 +58,9 @@ jobs:
 
     - name: Check emulator status
       run: adb shell getprop sys.boot_completed
+
+    - name: Run tests
+      run: ./gradlew connectedAndroidTest
 
     - name: Stop emulator
       run: adb -s emulator-5554 emu kill
