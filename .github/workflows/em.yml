@@ -33,7 +33,5 @@ jobs:
         adb wait-for-device
         adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
 
-    # Додаткові кроки для виконання ваших тестів або збірки додатка
-    # Наприклад:
-    # - name: Run tests
-    #   run: ./g
+    - name: Stop emulator
+      run: adb -s emulator-5554 emu kill
