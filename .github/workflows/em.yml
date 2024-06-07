@@ -40,18 +40,18 @@ jobs:
 
     - name: Install emulator
       if: steps.cache-emulator.outputs.cache-hit != 'true'
-      run: echo "y" | sdkmanager --install "system-images;android-30;default;x86_64"
+      run: echo "y" | sdkmanager --install "system-images;android-30;default;armeabi-v7a"
 
     - name: Create emulator
       if: steps.cache-emulator.outputs.cache-hit != 'true'
-      run: echo "no" | avdmanager --verbose create avd --force --name test --package "system-images;android-30;default;x86_64"
+      run: echo "no" | avdmanager --verbose create avd --force --name test --package "system-images;android-30;default;armeabi-v7a"
 
     - name: Start emulator
       env:
         ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
       run: |
         echo "Starting emulator..."
-        $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-audio -no-window &
+        $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-audio -no-window -gpu off &
         adb wait-for-device
         timeout 5m adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
         echo "Emulator started."
